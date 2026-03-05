@@ -1,0 +1,611 @@
+{
+  "info": {
+    "_postman_id": "40fd62c4-2b1d-43bc-acfd-1463e983d154",
+    "name": "TELCO RETO TENICO",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29499188"
+  },
+  "item": [
+    {
+      "name": "ventas agente",
+      "item": [
+        {
+          "name": "Registrarse como agente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"agente.manuel@gmail.com\",\r\n    \"password\":\"12345678Ad$\",\r\n    \"role\":\"AGENTE\",\r\n    \"supervisorId\":1\r\n    \r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "inciar sesion como agente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save accessToken after successful login",
+                  "pm.test(\"Login returns access token\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"accessToken\");",
+                  "  pm.expect(json.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "// Persist token to environment (preferred) and collection variables (fallback)",
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  const token = json?.accessToken;",
+                  "",
+                  "  if (token) {",
+                  "    // Optional fallback (useful when running without an active environment)",
+                  "    pm.collectionVariables.set(\"accessTokenAgente\", token);",
+                  "  }",
+                  "} catch (e) {",
+                  "  // Ignore JSON parse errors; test above will fail if response isn't valid JSON",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"agente.manuel@gmail.com\",\r\n    \"password\":\"12345678Ad$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "crear venta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenAgente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"dniCliente\":\"12345670\",\r\n    \"nombreCliente\":\"Juan carlos tello\",\r\n    \"telefonoCliente\":\"987654321\",\r\n    \"direccionCliente\":\"Av. universitaria 100\",\r\n    \"planActual\":\"Plan Basico\",\r\n    \"planNuevo\":\"Plan Premium\",\r\n    \"codigoLlamada\":\"CALL0010\",\r\n    \"producto\":\"FIJA_HOGAR\",\r\n    \"monto\":150.50\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ventas de agente",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenAgente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas/mis-ventas?estado=PENDIENTE&desde=2025-02-02&hasta=2026-04-03",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas",
+                "mis-ventas"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                },
+                {
+                  "key": "desde",
+                  "value": "2025-02-02"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-04-03"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ventas BACKOFFICE",
+      "item": [
+        {
+          "name": "Registrarse como backoffice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"backoffice.juan@gmail.com\",\r\n    \"password\":\"123456780Ad$\",\r\n    \"role\":\"BACKOFFICE\",\r\n    \"supervisorId\":1\r\n    \r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "inciar sesion como backoffice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save accessToken after successful login\r",
+                  "pm.test(\"Login returns access token\", () => {\r",
+                  "  pm.response.to.have.status(200);\r",
+                  "  const json = pm.response.json();\r",
+                  "  pm.expect(json).to.have.property(\"accessToken\");\r",
+                  "  pm.expect(json.accessToken).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "// Persist token to environment (preferred) and collection variables (fallback)\r",
+                  "try {\r",
+                  "  const json = pm.response.json();\r",
+                  "  const token = json?.accessToken;\r",
+                  "\r",
+                  "  if (token) {\r",
+                  "    // Optional fallback (useful when running without an active environment)\r",
+                  "    pm.collectionVariables.set(\"accessTokenBackoffice\", token);\r",
+                  "  }\r",
+                  "} catch (e) {\r",
+                  "  // Ignore JSON parse errors; test above will fail if response isn't valid JSON\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"backoffice.juan@gmail.com\",\r\n    \"password\":\"12345678Ad$\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ventas pendientes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenBackoffice}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas/pendientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas",
+                "pendientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "rechazar venta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenBackoffice}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"motivo\": \" el cliente cancelo venta por razones de salud \"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas/1/rechazar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas",
+                "1",
+                "rechazar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobar venta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenBackoffice}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas/2/aprobar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas",
+                "2",
+                "aprobar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ventas supervisor",
+      "item": [
+        {
+          "name": "Crear supervisor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"supervisor.wperez@gmail.com\",\r\n    \"password\":\"12345678Ad$fg\",\r\n    \"role\":\"SUPERVISOR\",\r\n    \"supervisorId\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login supervisor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save accessToken after successful login\r",
+                  "pm.test(\"Login returns access token\", () => {\r",
+                  "  pm.response.to.have.status(200);\r",
+                  "  const json = pm.response.json();\r",
+                  "  pm.expect(json).to.have.property(\"accessToken\");\r",
+                  "  pm.expect(json.accessToken).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "// Persist token to environment (preferred) and collection variables (fallback)\r",
+                  "try {\r",
+                  "  const json = pm.response.json();\r",
+                  "  const token = json?.accessToken;\r",
+                  "\r",
+                  "  if (token) {\r",
+                  "    // Optional fallback (useful when running without an active environment)\r",
+                  "    pm.collectionVariables.set(\"accessTokenSupervisor\", token);\r",
+                  "  }\r",
+                  "} catch (e) {\r",
+                  "  // Ignore JSON parse errors; test above will fail if response isn't valid JSON\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\":\"supervisor.wperez@gmail.com\",\r\n    \"password\":\"12345678Ad$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ventas bajo supervision",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenSupervisor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/ventas/equipo?estado=APROBADA&id=2&desde=2025-02-02&hasta=2026-04-03",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "ventas",
+                "equipo"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "APROBADA"
+                },
+                {
+                  "key": "id",
+                  "value": "2"
+                },
+                {
+                  "key": "desde",
+                  "value": "2025-02-02"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-04-03"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reporte de ventas por rango",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessTokenSupervisor}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/reportes/resumen?desde=2025-02-02&hasta=2026-05-03",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "reportes",
+                "resumen"
+              ],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "2025-02-02"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-05-03"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "accessTokenAgente",
+      "value": ""
+    },
+    {
+      "key": "accessTokenSupervisor",
+      "value": ""
+    },
+    {
+      "key": "accessTokenBackoffice",
+      "value": ""
+    }
+  ]
+}
